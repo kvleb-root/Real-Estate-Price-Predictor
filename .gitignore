@@ -1,0 +1,17 @@
+# Fichiers Python
+__pycache__/
+*.pyc
+
+# Base de données locale
+db.sqlite3
+
+# Environnement virtuel
+.env
+*.pkl
+
+# Pipenv
+Pipfile.lock
+
+# IDEs
+.vscode/
+.idea/
