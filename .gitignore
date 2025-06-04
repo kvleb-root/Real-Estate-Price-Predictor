@@ -1,17 +1,29 @@
-# Fichiers Python
-__pycache__/
+# Fi# Python
 *.pyc
+__pycache__/
 
-# Base de données locale
+# Django
+*.sqlite3
 db.sqlite3
-
-# Environnement virtuel
 .env
-*.pkl
 
-# Pipenv
+# Virtual env
+venv/
+.env/
 Pipfile.lock
+
+# Static
+staticfiles/
+media/
+
+# Model files
+*.pkl
+*.joblib
 
 # IDEs
 .vscode/
 .idea/
+
+# OS-specific
+.DS_Store
+Thumbs.db
