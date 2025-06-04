@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Prédiction du prix immobilier</title>
+  <link rel="icon" type="image/png" href="../static/image/housing.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: linear-gradient(rgba(0, 0, 32, 0.7), rgba(0, 0, 32, 0.8)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    .animate-scale-in {
+      animation: scaleIn 0.5s ease-out forwards;
+    }
+
+    .form-group {
+      animation: slideIn 0.5s ease-out forwards;
+      opacity: 0;
+    }
+
+    .form-group:nth-child(odd) {
+      animation-delay: calc(0.1s * var(--delay));
+    }
+
+    .form-group:nth-child(even) {
+      animation-delay: calc(0.15s * var(--delay));
+    }
+
+    .input-focus-effect {
+      transition: all 0.3s ease;
+    }
+
+    .input-focus-effect:focus {
+      transform: scale(1.02);
+      box-shadow: 0 0 15px rgba(17, 24, 39, 0.3);
+    }
+
+    .submit-button-effect {
+      transition: all 0.3s ease;
+    }
+
+    .submit-button-effect:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(17, 24, 39, 0.4);
+    }
+
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="glass-effect p-8 rounded-2xl shadow-xl w-full max-w-2xl animate-fade-in">
+    <div class="flex justify-center mb-6">
+      <img src="../static/image/housing.png" alt="Logo Housing" class="h-20 w-auto animate-scale-in">
+    </div>
+    <h1 class="text-3xl font-bold text-center mb-8 animate-scale-in bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-blue-900">
+      Estimation du prix d'un logement
+    </h1>
+    
+    <form method="POST" action="{% url 'predict' %}" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {% csrf_token %}
+
+      <div class="form-group" style="--delay: 1">
+        <label class="block font-medium text-gray-900 mb-2">🏠 Surface habitable (m²)</label>
+        <input type="number" name="area" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+      </div>
+      
+      <div class="form-group" style="--delay: 2">
+        <label class="block font-medium text-gray-900 mb-2">🛏️ Nombre de chambres</label>
+        <input type="number" name="bedrooms" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+      </div>
+
+      <div class="form-group" style="--delay: 3">
+        <label class="block font-medium text-gray-900 mb-2">🚿 Salles de bain & d'eau</label>
+        <input type="number" name="bathrooms" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+      </div>
+
+      <div class="form-group" style="--delay: 4">
+        <label class="block font-medium text-gray-900 mb-2">🏗️ Nombre de niveaux</label>
+        <input type="number" name="stories" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+      </div>
+
+      <div class="form-group" style="--delay: 5">
+        <label class="block font-medium text-gray-900 mb-2">🛣️ Accès route principale</label>
+        <select name="mainroad" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+          <option value="1">Oui, accès direct</option>
+          <option value="0">Non, rue secondaire</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="--delay: 6">
+        <label class="block font-medium text-gray-900 mb-2">👥 Suite pour invités</label>
+        <select name="guestroom" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+          <option value="1">Oui, disponible</option>
+          <option value="0">Non, pas de suite</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="--delay: 7">
+        <label class="block font-medium text-gray-900 mb-2">🏚️ Cave/Sous-sol</label>
+        <select name="basement" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+          <option value="1">Oui, aménagé</option>
+          <option value="0">Non, sans sous-sol</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="--delay: 8">
+        <label class="block font-medium text-gray-900 mb-2">🔥 Chauffage central</label>
+        <select name="hotwaterheating" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+          <option value="1">Oui, système centralisé</option>
+          <option value="0">Non, chauffage individuel</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="--delay: 9">
+        <label class="block font-medium text-gray-900 mb-2">❄️ Climatisation</label>
+        <select name="airconditioning" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+          <option value="1">Oui, climatisé</option>
+          <option value="0">Non, sans clim</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="--delay: 10">
+        <label class="block font-medium text-gray-900 mb-2">🚗 Places de stationnement</label>
+        <input type="number" name="parking" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+      </div>
+
+      <div class="form-group" style="--delay: 11">
+        <label class="block font-medium text-gray-900 mb-2">⭐ Quartier prisé</label>
+        <select name="prefarea" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+          <option value="1">Oui, emplacement premium</option>
+          <option value="0">Non, quartier standard</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="--delay: 12">
+        <label class="block font-medium text-gray-900 mb-2">🪑 État du mobilier</label>
+        <select name="furnishingstatus" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 input-focus-effect focus:border-gray-900 focus:outline-none bg-white bg-opacity-90">
+          <option value="0">Non meublé - À aménager</option>
+          <option value="1">Semi-meublé - Équipements essentiels</option>
+          <option value="2">Meublé - Prêt à vivre</option>
+        </select>
+      </div>
+
+      <div class="md:col-span-2 flex justify-center mt-8 form-group" style="--delay: 13">
+        <button type="submit" class="bg-gradient-to-r from-gray-900 to-blue-900 text-white px-8 py-3 rounded-lg font-semibold shadow-lg submit-button-effect hover:from-blue-900 hover:to-gray-900">
+          Prédire le prix
+        </button>
+      </div>
+    </form>
+
+    {% if prediction %}
+      <div class="mt-8 text-center animate-scale-in">
+        <h2 class="text-2xl font-semibold text-gray-900 bg-white bg-opacity-90 inline-block px-6 py-3 rounded-lg shadow-sm border-2 border-gray-200">
+          Prix estimé : {{ prediction }}
+        </h2>
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    // Ajouter un effet de focus sur les inputs
+    document.querySelectorAll('input, select').forEach(element => {
+      element.addEventListener('focus', () => {
+        element.closest('.form-group').style.transform = 'scale(1.02)';
+      });
+      
+      element.addEventListener('blur', () => {
+        element.closest('.form-group').style.transform = 'scale(1)';
+      });
+    });
+  </script>
+</body>
+</html> 
